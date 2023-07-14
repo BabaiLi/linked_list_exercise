@@ -1,9 +1,9 @@
 use linked_list_exercise::List;
 
 fn main() {
-    let a = vec![1, 2, 3, 4, 5];
-    let aa = List::from(a);
-    println!("{:?}", aa.into_vec());
+    let v = vec![1, 2, 3, 4, 5];
+    let list = List::from(v);
+    println!("{:?}", list.into_vec());
 
     let mut n = List::new();
     n.push(1);
