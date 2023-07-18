@@ -1,11 +1,11 @@
-#[derive(Debug)]
+pub use std::ops::Deref;
+
 pub struct List<T> {
     pub head: ListPtr<T>,
 }
 
 pub type ListPtr<T> = Option<Box<Node<T>>>;
 
-#[derive(Debug)]
 pub struct Node<T> {
     pub val: T,
     pub next: ListPtr<T>,
@@ -42,8 +42,67 @@ impl<T> List<T> {
                 &mut node.val
             })
     }
+    pub fn reverse(&mut self) {
+        let mut prev = None;
+        let mut curr = self.head.take();
+
+        while let Some(mut node) = curr.take() {
+            let next = node.next.take();
+            node.next = prev.take();
+            prev = Some(node);
+            curr = next;
+        }
+        self.head = prev.take();
+    }
+    pub fn len(&self) -> usize {
+        let mut n = 0;
+        let mut list = self.head.as_ref();
+        while let Some(node) = list.take() {
+            list = node.next.as_ref().take();
+            n += 1;
+        }
+        n
+    }
+    pub fn insert(&mut self, pos: usize, elem: T) {
+        let mut pos_ = self.len() - (pos + 1);
+        let mut curr = &mut self.head;
+
+        while pos_ > 0 {
+            curr = match curr.as_mut() {
+                Some(node) => &mut node.next,
+                None => panic!("Error"),
+            };
+            pos_ -= 1;
+        }
+
+        match curr.take() {
+            Some(mut node) => {
+                let new_node = Box::new(Node {
+                    val: elem,
+                    next: node.next,
+                });
+                node.next = Some(new_node);
+                *curr = Some(node);
+            },
+            None => panic!("Error"),
+        }
+    }
+    pub fn remove(&mut self, pos: usize) {
+        let mut pos = self.len() - (pos + 1);
+        let mut curr = &mut self.head;
+
+        while pos > 0 {
+            curr = &mut curr.as_mut().unwrap().next;
+            pos -= 1;
+        }
+
+        let node = curr.take();
+        *curr = node.unwrap().next;
+    }
     pub fn into_vec(self) -> Vec<T> {
-        self.into_iter().collect()
+        let mut v: Vec<_> = self.into_iter().collect();
+        v.reverse();
+        v
     }
 }
 
@@ -101,7 +160,7 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 impl<T> From<Vec<T>> for List<T> {
     fn from(v: Vec<T>) -> Self {
         let mut head = List::new();
-        for i in v.into_iter().rev() {
+        for i in v.into_iter() {
             head.push(i);
         }
         head
@@ -114,5 +173,15 @@ impl<T> Drop for List<T> {
         while let Some(node) = cur_link {
             cur_link = node.next;
         }
+    }
+}
+
+impl<T: std::fmt::Debug> std::fmt::Debug for List<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        for node in self.iter() {
+            write!(f, "{:?} -> ", node)?;
+        }
+        write!(f, "None")?;
+        Ok(())
     }
 }
