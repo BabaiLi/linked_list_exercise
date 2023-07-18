@@ -1,5 +1,3 @@
-pub use std::ops::Deref;
-
 pub struct List<T> {
     pub head: ListPtr<T>,
 }
