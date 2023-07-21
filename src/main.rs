@@ -1,4 +1,4 @@
-use linked_list_exercise::List;
+use linked_list_exercise::{List, RcList};
 
 fn main() {
     let v = vec![1, 2, 3, 4, 5];
@@ -10,9 +10,14 @@ fn main() {
     n.push(2);
     n.push(3);
     n.push(4);
-    println!("{:?}", &n);
+    println!("List: {:?}", &n);
     n.insert(2, 7);
-    println!("{:?}", &n);
+    println!("List: {:?}", &n);
     n.remove(2);
-    println!("{:?}", n);
+    println!("List: {:?}", n);
+
+    let mut rc_list = RcList::new().prepend(1).prepend(2);
+    println!("RcList: {:?}", &rc_list);
+    println!("Head: {:?}", &rc_list.head());
+    println!("Tail: {:?}", rc_list.tail());
 }

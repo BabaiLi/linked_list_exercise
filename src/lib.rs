@@ -1,3 +1,6 @@
+pub mod rc_list;
+pub use rc_list::RcList;
+
 pub struct List<T> {
     pub head: ListPtr<T>,
 }
