@@ -1,4 +1,7 @@
-use linked_list_exercise::{List, RcList};
+pub mod list;
+pub mod rc_list;
+pub use list::List;
+pub use rc_list::RcList;
 
 fn main() {
     let v = vec![1, 2, 3, 4, 5];
